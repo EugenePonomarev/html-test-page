@@ -1337,8 +1337,6 @@ document.addEventListener('DOMContentLoaded', () => {
         menuContainer.addEventListener('mousedown', onDragStart);
         menuContainer.addEventListener('touchstart', onDragStart, { passive: true });
     }
-    
-    window.toggleMenu = toggleMenu;
 
     function setupNavigation(elements) {
         const handleNavClick = (event) => {

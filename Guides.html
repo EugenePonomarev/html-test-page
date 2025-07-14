@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<!-- ИЗМЕНЕНИЕ 1: Добавлен 'interactive-widget=resizes-content' для лучшей интеграции с виртуальной клавиатурой -->
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" name="viewport"/>
 <title>Remote Order Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded&display=block" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -110,6 +111,9 @@
   --image-block-internal-padding: 1.25rem;
   --image-block-margin-top: 1.25rem;
   --card-radius: 16px;
+
+  /* ИЗМЕНЕНИЕ 2: Добавлена CSS переменная для запасного варианта смещения клавиатуры */
+  --keyboard-offset: 0px;
 }
 
 body {
@@ -308,18 +312,19 @@ body.no-scroll {
 }
 
 .floating-bottom-nav.is-searching {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    max-width: 100%;
-    border-radius: 0;
-    transform: none !important;
-    padding: var(--spacing-sm) var(--spacing-md);
-    box-sizing: border-box;
-    z-index: 1002;
-    justify-content: flex-start;
-    gap: var(--spacing-md);
+  position: fixed;
+  left: 0;
+  /* ИЗМЕНЕНИЕ 3: Используется env(keyboard-inset-height) для основного метода и --keyboard-offset для запасного */
+  bottom: env(keyboard-inset-height, var(--keyboard-offset));
+  width: 100%;
+  max-width: 100%;
+  border-radius: 0;
+  transform: none !important;
+  padding: var(--spacing-sm) var(--spacing-md);
+  box-sizing: border-box;
+  z-index: 1002;
+  justify-content: flex-start;
+  gap: var(--spacing-md);
 }
 
 .floating-bottom-nav.is-searching .nav-title,
@@ -707,91 +712,6 @@ p + .image-block {
 }
 
 * { -webkit-tap-highlight-color: transparent; }
-
-/*
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-color: var(--primary-color-dark);
-    --secondary-color: var(--secondary-color-dark);
-    --text-color: var(--text-color-dark);
-    --card-bg: var(--card-bg-dark);
-    --card-shadow: var(--card-shadow-dark);
-    --appbar-bg: var(--appbar-bg-dark);
-    --appbar-text: var(--appbar-text-dark);
-    --menu-item-hover-bg: var(--menu-item-hover-bg-dark);
-    --toc-item-bg: var(--toc-item-bg-dark);
-    --toc-item-text: var(--text-color-dark);
-    --toc-item-hover-bg: var(--menu-item-hover-bg-dark);
-    --input-border: var(--input-border-dark);
-    --input-focus-border: var(--input-focus-border-dark);
-    --input-focus-shadow: var(--input-focus-shadow-dark);
-    --image-block-bg: var(--image-block-bg-dark);
-    --image-block-border: var(--image-block-border-dark);
-    --image-block-caption-bg: var(--image-block-caption-bg-dark);
-    --image-block-caption-text: var(--image-block-caption-text-dark);
-    --no-results-bg: var(--no-results-bg-dark);
-    --no-results-text: var(--no-results-text-dark);
-    --no-results-border: var(--no-results-border-dark);
-    --attention-bg: var(--attention-bg-dark);
-    --attention-text: var(--attention-text-dark);
-    --attention-border: var(--attention-border-dark);
-    --attention-icon: var(--attention-icon-dark);
-    --search-highlight-bg: var(--search-highlight-bg-dark);
-    --skeleton-shimmer: var(--skeleton-shimmer-dark);
-    --search-nav-disabled: var(--search-nav-disabled-dark);
-  }
-
-  .toc-list li a .arrow {
-      color: #757575;
-  }
-  .toc-list li:active {
-    background-color: rgba(255, 255, 255, 0.05);
-  }
-  .drag-handle {
-    background-color: #444;
-  }
-  .menu-header {
-    border-bottom-color: #444;
-  }
-  .menu-header .close-btn .material-symbols-rounded {
-    color: var(--text-color-dark);
-  }
-  #menu-list li a .arrow {
-    color: #bdbdbd;
-  }
-  .floating-bottom-nav .nav-title {
-      color: var(--secondary-color-dark);
-  }
-  .floating-bottom-nav .nav-btn .material-symbols-rounded {
-      color: var(--secondary-color-dark);
-  }
-  .floating-bottom-nav.is-searching .search-controls .nav-btn .material-symbols-rounded,
-  .floating-bottom-nav.is-searching .search-controls .search-counter,
-  .floating-bottom-nav.is-searching #close-search-btn .material-symbols-rounded {
-      color: var(--secondary-color-dark);
-  }
-  .floating-bottom-nav.is-searching .search-controls .nav-btn.disabled .material-symbols-rounded {
-      color: var(--search-nav-disabled-dark);
-  }
-  .floating-bottom-nav input#sectionSearch {
-      background-color: var(--image-block-bg-dark);
-      color: var(--text-color-dark);
-  }
-  .floating-bottom-nav input#sectionSearch::placeholder {
-      color: #888;
-  }
-  .current-highlight {
-    color: var(--secondary-color-dark);
-  }
-  .image-block .caption {
-      color: #bbb;
-  }
-  .fab {
-    background-color: var(--primary-color);
-    color: var(--secondary-color-dark);
-  }
-}
-*/
 
 /* Interaction styles for tap */
 .floating-bottom-nav .nav-btn:active {
@@ -1453,8 +1373,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 floatingNav.classList.add('is-searching');
                 closeSearchBtn.style.display = 'flex';
                 scrollToTopBtn.classList.add('search-active');
-                // Corrected padding for search mode to ensure consistent spacing.
-                // The required padding is the height of the search bar (64px).
                 document.body.style.paddingBottom = '64px';
                 searchInput.focus();
                 searchCounter.classList.add('hidden');
@@ -1463,10 +1381,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 searchInput.value = '';
                 searchCounter.classList.add('hidden');
                 floatingNav.classList.remove('is-searching');
-                floatingNav.style.bottom = '';
+                // The 'bottom' property is now handled by CSS, so we don't need to reset it here
                 closeSearchBtn.style.display = 'none';
                 scrollToTopBtn.classList.remove('search-active');
-                // Revert to the default padding defined in the stylesheet.
                 document.body.style.paddingBottom = '';
                 searchInput.blur();
                 justClosedSearch = true; // Set flag to prevent nav hiding
@@ -1492,13 +1409,16 @@ document.addEventListener('DOMContentLoaded', () => {
         bottomSearchBtn.addEventListener('click', () => setSearchMode(true));
         closeSearchBtn.addEventListener('click', () => setSearchMode(false));
 
-        // Adjust nav position for on-screen keyboard using visualViewport API
+        // Adjust nav position for on-screen keyboard using visualViewport API as a fallback
         if ('visualViewport' in window) {
             const viewport = window.visualViewport;
             const handleViewportChange = () => {
                 if (!floatingNav.classList.contains('is-searching')) return;
+                
+                // ИЗМЕНЕНИЕ 4: Вместо прямого изменения style.bottom, устанавливаем CSS переменную.
+                // Это позволяет CSS (env()) иметь приоритет, а JS работает как запасной вариант.
                 const bottomOffset = window.innerHeight - viewport.height - viewport.offsetTop;
-                floatingNav.style.bottom = `${Math.max(0, bottomOffset)}px`;
+                document.documentElement.style.setProperty('--keyboard-offset', `${Math.max(0, bottomOffset)}px`);
             };
             viewport.addEventListener('resize', handleViewportChange);
             viewport.addEventListener('scroll', handleViewportChange);
